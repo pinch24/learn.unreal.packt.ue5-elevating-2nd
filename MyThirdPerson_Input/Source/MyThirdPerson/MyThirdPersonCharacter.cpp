@@ -63,9 +63,27 @@ void AMyThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 			}
 		}
 
+		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AMyThirdPersonCharacter::Look);
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMyThirdPersonCharacter::Move);
 		EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &AMyThirdPersonCharacter::Jump);
 		EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AMyThirdPersonCharacter::StopJumping);
+		EnhancedInputComponent->BindAction(IA_Walk, ETriggerEvent::Started, this, &AMyThirdPersonCharacter::BeginWalking);
+		EnhancedInputComponent->BindAction(IA_Walk, ETriggerEvent::Completed, this, &AMyThirdPersonCharacter::StopWalking);
+	}
+}
+
+void AMyThirdPersonCharacter::Look(const FInputActionValue& Value)
+{
+	FVector2D InputValue = Value.Get<FVector2D>();
+
+	if (InputValue.X != 0.0f)
+	{
+		AddControllerYawInput(InputValue.X);
+	}
+
+	if (InputValue.Y != 0.0f)
+	{
+	    AddControllerPitchInput(InputValue.Y);
 	}
 }
 
@@ -88,4 +106,14 @@ void AMyThirdPersonCharacter::Move(const FInputActionValue& Value)
 			AddMovementInput(ForwardDirection, InputValue.Y);
 		}
 	}
+}
+
+void AMyThirdPersonCharacter::BeginWalking(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed *= 0.4f;
+}
+
+void AMyThirdPersonCharacter::StopWalking(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed /= 0.4f;
 }

@@ -26,12 +26,18 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputMappingContext* IC_Character;
-    
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Look;
+    	
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Move;
     
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Jump;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* IA_Walk;
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,6 +48,9 @@ protected:
     
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
+	void BeginWalking(const FInputActionValue& Value);
+	void StopWalking(const FInputActionValue& Value);
 };
