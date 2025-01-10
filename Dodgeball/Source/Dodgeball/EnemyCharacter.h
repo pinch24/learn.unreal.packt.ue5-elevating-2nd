@@ -10,11 +10,13 @@ UCLASS()
 class DODGEBALL_API AEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* SightSource;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

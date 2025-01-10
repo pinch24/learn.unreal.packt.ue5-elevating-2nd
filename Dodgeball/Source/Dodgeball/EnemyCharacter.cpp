@@ -4,6 +4,8 @@
 #include "EnemyCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -11,6 +13,8 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
+	SightSource->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -57,10 +61,10 @@ bool AEnemyCharacter::CanSeeActor(const AActor* const TargetActor) const
 
 	FHitResult Hit;
 
-	FVector Start = GetActorLocation();
+	FVector Start = SightSource->GetComponentLocation();
 	FVector End = TargetActor->GetActorLocation();
 
-	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
+	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
 
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
@@ -78,10 +82,10 @@ bool AEnemyCharacter::CanSeeActor2(const AActor* const TargetActor) const
 
 	FHitResult Hit;
 
-	FVector Start = GetActorLocation();
+	FVector Start = SightSource->GetComponentLocation();
 	FVector End = TargetActor->GetActorLocation();
 
-	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
+	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
 
 	// Sweep Trace
 	FQuat Rotation = FQuat::Identity;
