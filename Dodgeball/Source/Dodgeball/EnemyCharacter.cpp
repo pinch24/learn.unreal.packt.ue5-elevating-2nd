@@ -2,6 +2,7 @@
 
 
 #include "EnemyCharacter.h"
+#include "DodgeballProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -31,7 +32,21 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
 
-	LookAtActor(PlayerCharacter);
+	bCanSeePlayer = LookAtActor(PlayerCharacter);
+
+	if (bCanSeePlayer != bPreviousCanSeePlayer)
+	{
+		if (bCanSeePlayer)
+		{
+			GetWorldTimerManager().SetTimer(ThrowTimerHandle, this, &AEnemyCharacter::ThrowDodgeball, ThrowingInterval, true, ThrowingDelay);
+		}
+		else
+		{
+			GetWorldTimerManager().ClearTimer(ThrowTimerHandle);
+		}
+	}
+
+	bPreviousCanSeePlayer = bCanSeePlayer;
 }
 
 // Called to bind functionality to input
@@ -41,9 +56,9 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	
 }
 
-void AEnemyCharacter::LookAtActor(AActor* TargetActor)
+bool AEnemyCharacter::LookAtActor(AActor* TargetActor)
 {
-	if (TargetActor == nullptr) return;
+	if (TargetActor == nullptr) return false;
 
 	if (CanSeeActor(TargetActor))
 	{
@@ -52,7 +67,10 @@ void AEnemyCharacter::LookAtActor(AActor* TargetActor)
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
 
 		SetActorRotation(LookAtRotation);
+		return true;
 	}
+
+	return false;
 }
 
 bool AEnemyCharacter::CanSeeActor(const AActor* const TargetActor) const
@@ -94,4 +112,17 @@ bool AEnemyCharacter::CanSeeActor2(const AActor* const TargetActor) const
 	DrawDebugBox(GetWorld(), Start, End, FColor::Green);
 	
 	return Hit.bBlockingHit == false;
+}
+
+void AEnemyCharacter::ThrowDodgeball()
+{
+	if (DodgeballClass == nullptr)
+	{
+		return;
+	}
+
+	FVector ForwardVector = GetActorForwardVector();
+	float SpawnDistance = 40.f;
+	FVector SpawnLocation = GetActorLocation() + (ForwardVector * SpawnDistance);
+	GetWorld()->SpawnActor<ADodgeballProjectile>(DodgeballClass, SpawnLocation, GetActorRotation());
 }

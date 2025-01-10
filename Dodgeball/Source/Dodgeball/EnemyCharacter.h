@@ -14,21 +14,35 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* SightSource;
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void LookAtActor(AActor* TargetActor);
+	bool LookAtActor(AActor* TargetActor);
 	bool CanSeeActor(const AActor* const TargetActor) const;
 	bool CanSeeActor2(const AActor* const TargetActor) const;
+
+	bool bCanSeePlayer = false;
+	bool bPreviousCanSeePlayer = false;
+
+	FTimerHandle ThrowTimerHandle;
+
+	float ThrowingInterval = 2.f;
+	float ThrowingDelay = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Dodgeball)
+	TSubclassOf<class ADodgeballProjectile> DodgeballClass;
+
+	void ThrowDodgeball();
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* SightSource;
 };
+
