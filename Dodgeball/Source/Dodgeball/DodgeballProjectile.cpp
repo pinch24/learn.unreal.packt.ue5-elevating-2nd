@@ -2,6 +2,7 @@
 
 
 #include "DodgeballProjectile.h"
+#include "DodgeballCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
