@@ -25,8 +25,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	bool LookAtActor(AActor* TargetActor);
-	bool CanSeeActor(const AActor* const TargetActor) const;
-	bool CanSeeActor2(const AActor* const TargetActor) const;	// No Use
+	//bool CanSeeActor(const AActor* const TargetActor) const;
+	//bool CanSeeActor2(const AActor* const TargetActor) const;	// No Use
 
 	bool bCanSeePlayer = false;
 	bool bPreviousCanSeePlayer = false;
