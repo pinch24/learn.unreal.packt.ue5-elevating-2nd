@@ -4,6 +4,7 @@
 #include "EnemyCharacter.h"
 #include "DodgeballFunctionLibrary.h"
 #include "DodgeballProjectile.h"
+#include "LookAtActorComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
@@ -15,14 +16,17 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
-	SightSource->SetupAttachment(RootComponent);
+	LookAtActorComponent = CreateDefaultSubobject<ULookAtActorComponent>(TEXT("Look at Actor Component"));
+	LookAtActorComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	LookAtActorComponent->SetTarget(PlayerCharacter);
 }
 
 // Called every frame
@@ -30,9 +34,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-
-	bCanSeePlayer = LookAtActor(PlayerCharacter);
+	bCanSeePlayer = LookAtActorComponent->CanSeeTarget(); 
 
 	if (bCanSeePlayer != bPreviousCanSeePlayer)
 	{
@@ -53,24 +55,6 @@ void AEnemyCharacter::Tick(float DeltaTime)
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-bool AEnemyCharacter::LookAtActor(AActor* TargetActor)
-{
-	if (TargetActor == nullptr) return false;
-
-	const TArray<const AActor*> IgnoreActors = { this, TargetActor };
-	if (UDodgeballFunctionLibrary::CanSeeActor(GetWorld(), SightSource->GetComponentLocation(), TargetActor, IgnoreActors))
-	{
-		FVector Start = GetActorLocation();
-		FVector End = TargetActor->GetActorLocation();
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-
-		SetActorRotation(LookAtRotation);
-		return true;
-	}
-
-	return false;
 }
 
 void AEnemyCharacter::ThrowDodgeball()
