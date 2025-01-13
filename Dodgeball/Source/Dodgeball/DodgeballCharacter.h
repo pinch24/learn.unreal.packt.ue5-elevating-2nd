@@ -44,6 +44,8 @@ class ADodgeballCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	class UHealthComponent* HealthComponent;
+
 public:
 	ADodgeballCharacter();
 	
