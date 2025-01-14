@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DodgeballCharacter.h"
-
 #include "DodgeballPlayerController.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -69,6 +68,15 @@ void ADodgeballCharacter::OnDeath_Implementation()
 	if (PlayerController != nullptr)
 	{
 		PlayerController->ShowRestartWidget();
+	}
+}
+
+void ADodgeballCharacter::OnTakeDamage_Implementation()
+{
+	ADodgeballPlayerController* PlayerController = Cast<ADodgeballPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->UpdateHealthPercent(HealthComponent->GetHealthPercent());
 	}
 }
 

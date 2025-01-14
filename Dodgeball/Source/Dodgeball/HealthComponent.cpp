@@ -36,6 +36,12 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UHealthComponent::LoseHealth(float Amount)
 {
 	Health -= Amount;
+
+	if (GetOwner()->Implements<UHealthInterface>())
+	{
+		IHealthInterface::Execute_OnTakeDamage(GetOwner());
+	}
+	
 	if (Health <= 0.f)
 	{
 		Health = 0.f;
