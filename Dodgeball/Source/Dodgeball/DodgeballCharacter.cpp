@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DodgeballCharacter.h"
+
+#include "DodgeballPlayerController.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -11,7 +13,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "HealthComponent.h"
 #include "InputActionValue.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -64,7 +65,11 @@ ADodgeballCharacter::ADodgeballCharacter()
 
 void ADodgeballCharacter::OnDeath_Implementation()
 {
-	UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
+	ADodgeballPlayerController* PlayerController = Cast<ADodgeballPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->ShowRestartWidget();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
