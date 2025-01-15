@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Sound)
 	class USoundAttenuation* BounceSoundAttenuation;
 
+	UPROPERTY(EditAnywhere, Category = Particles)
+	class UParticleSystem* HitParticles;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
